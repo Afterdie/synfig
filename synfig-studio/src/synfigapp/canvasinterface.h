@@ -38,7 +38,6 @@
 
 //#include <synfig/canvas.h>
 #include <synfig/value.h>
-
 #include "selectionmanager.h"
 #include "uimanager.h"
 #include "value_desc.h"
@@ -273,6 +272,12 @@ public:
 
 	//! Changes the current time to the next keyframe
 	void jump_to_prev_keyframe();
+
+	//! Changes the current time to the next waypoint
+	void jump_to_next_waypoint();
+
+	//! Changes the current time to the next waypoint
+	void jump_to_prev_waypoint();
 
 	void seek_frame(int frames);
 

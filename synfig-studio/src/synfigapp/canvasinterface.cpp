@@ -66,7 +66,6 @@
 #include <synfig/valuenodes/valuenode_timedswap.h>
 #include <synfig/valuenodes/valuenode_twotone.h>
 #include <synfig/valuenodes/valuenode_wplist.h>
-
 #include <synfigapp/localization.h>
 
 #include "action_system.h"
@@ -79,7 +78,7 @@
 #include "actions/layerremove.h"
 #include "actions/valuedescconvert.h"
 #include "actions/valuenodeadd.h"
-
+#include <iostream>
 #endif
 
 /* === U S I N G =========================================================== */
@@ -698,6 +697,16 @@ CanvasInterface::jump_to_prev_keyframe()
 		synfig::warning("Unable to find prev keyframe");
 	}
 	//catch(...) { synfig::warning("Unable to find prev keyframe"); }
+}
+
+void
+CanvasInterface::jump_to_prev_waypoint(){
+	std::cout <<"bruh\n";
+	//synfig::Widget_timetrack::goto_next_waypoint(1);
+}
+void
+CanvasInterface::jump_to_next_waypoint(){
+	std::cout <<"next\n";
 }
 
 static void update_layer_size(const RendDesc& rend_desc, Layer::Handle& layer, bool resize_image) {

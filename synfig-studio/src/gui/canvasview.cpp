@@ -884,6 +884,8 @@ CanvasView::create_time_bar()
 
 	framedial->signal_seek_begin().connect(
 		sigc::mem_fun(*this, &CanvasView::on_seek_begin_pressed) );
+	framedial->signal_seek_prev_waypoint().connect(
+		sigc::mem_fun(*canvas_interface().get(), &CanvasInterface::jump_to_prev_waypoint));
 	framedial->signal_seek_prev_keyframe().connect(
 		sigc::mem_fun(*canvas_interface().get(), &CanvasInterface::jump_to_prev_keyframe));
 	framedial->signal_seek_prev_frame().connect(
@@ -896,6 +898,8 @@ CanvasView::create_time_bar()
 		sigc::bind(sigc::mem_fun(*canvas_interface().get(), &CanvasInterface::seek_frame), 1));
 	framedial->signal_seek_next_keyframe().connect(
 		sigc::mem_fun(*canvas_interface().get(), &CanvasInterface::jump_to_next_keyframe));
+	framedial->signal_seek_next_waypoint().connect(
+		sigc::mem_fun(*canvas_interface().get(), &CanvasInterface::jump_to_next_waypoint));
 	framedial->signal_seek_end().connect(
 		sigc::mem_fun(*this, &CanvasView::on_seek_end_pressed) );
 	framedial->signal_end_time_changed().connect(
@@ -1416,6 +1420,8 @@ CanvasView::init_menus()
 
 		{"jump-next-keyframe", "animate_seek_next_keyframe_icon", N_("Seek to Next Keyframe"),      "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_next_keyframe) },
 		{"jump-prev-keyframe", "animate_seek_prev_keyframe_icon", N_("Seek to Previous Keyframe") , "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_prev_keyframe) },
+		{"jump-next-waypoint", "animate_seek_next_keyframe_icon", N_("Seek to Next Waypoint"),      "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_next_waypoint) },
+		{"jump-prev-waypoint", "animate_seek_prev_keyframe_icon", N_("Seek to Previous Waypoint") , "", sigc::mem_fun(*canvas_interface(), &CanvasInterface::jump_to_prev_waypoint) },
 
 	};
 

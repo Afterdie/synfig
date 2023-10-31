@@ -40,7 +40,7 @@
 #include <synfig/general.h>
 #include <synfig/timepointcollect.h>
 #include <synfig/valuenodes/valuenode_dynamiclist.h>
-
+#include <iostream>
 #endif
 
 #ifdef _MSC_VER
@@ -310,7 +310,7 @@ void Widget_Timetrack::goto_next_waypoint(long n)
 	if (selection.size() != 1 || n == 0)
 		return;
 	const WaypointItem wi = *selection.front();
-
+//	
 	const synfig::Node::time_set& time_set = WaypointRenderer::get_times_from_valuedesc(param_info_map[wi.path.to_string()].get_value_desc());
 	if (time_set.size() == 1)
 		return;
