@@ -700,13 +700,25 @@ CanvasInterface::jump_to_prev_keyframe()
 }
 
 void
-CanvasInterface::jump_to_prev_waypoint(){
-	std::cout <<"bruh\n";
-	//synfig::Widget_timetrack::goto_next_waypoint(1);
+CanvasInterface::jump_to_prev_waypoint()
+{
+	ValueNode_AnimatedInterface *l; //find a way to retrieve the waypointlist of the main canvas
+	WaypointList::iterator iter = l->find_prev(get_time());
+	if (iter != l->editable_waypoint_list().end()) {
+		set_time(iter->get_time());
+	} else {
+		synfig::warning("Unable to find prev waypoint");
+	}
 }
 void
 CanvasInterface::jump_to_next_waypoint(){
-	std::cout <<"next\n";
+	ValueNode_AnimatedInterface *l; //find a way to retrieve the valueNode_animatedInterface canvas
+	WaypointList::iterator waypoint = value->find_next(get_time());
+	if (waypoint != value->editable_waypoint_list().end()) {
+		set_time(waypoint->get_time());
+	} else {
+		synfig::warning("Unable to find previous waypoint");
+	}
 }
 
 static void update_layer_size(const RendDesc& rend_desc, Layer::Handle& layer, bool resize_image) {
