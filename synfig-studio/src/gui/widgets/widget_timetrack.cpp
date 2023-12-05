@@ -40,7 +40,6 @@
 #include <synfig/general.h>
 #include <synfig/timepointcollect.h>
 #include <synfig/valuenodes/valuenode_dynamiclist.h>
-#include <iostream>
 #endif
 
 #ifdef _MSC_VER
@@ -310,7 +309,7 @@ void Widget_Timetrack::goto_next_waypoint(long n)
 	if (selection.size() != 1 || n == 0)
 		return;
 	const WaypointItem wi = *selection.front();
-//	
+
 	const synfig::Node::time_set& time_set = WaypointRenderer::get_times_from_valuedesc(param_info_map[wi.path.to_string()].get_value_desc());
 	if (time_set.size() == 1)
 		return;
@@ -444,10 +443,8 @@ bool Widget_Timetrack::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		}
 
 		const Geometry& geometry = row_info.get_geometry();
-		if (geometry.h == 0) {
-			--row_number;
+		if (geometry.h == 0)
 			return false;
-		}
 
 		if (geometry.y + geometry.h < 0 || geometry.y > get_height())
 			return false;
@@ -887,8 +884,11 @@ void Widget_Timetrack::draw_selected_background(const Cairo::RefPtr<Cairo::Conte
 {
 	if (!params_treeview)
 		return;
+	std::vector<Gtk::TreePath> path_list = params_treeview->get_selection()->get_selected_rows();
+	if (path_list.empty())
+		return;
 
-	if (params_treeview->get_selection()->is_selected(path)) {
+	if (std::find(path_list.begin(), path_list.end(), path) != path_list.end()) {
 		auto context = use_selected_color_from_parameter_tree ? params_treeview->get_style_context() : get_style_context();
 
 		Geometry geometry = row_info.get_geometry();
