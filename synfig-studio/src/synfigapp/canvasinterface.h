@@ -38,6 +38,7 @@
 
 //#include <synfig/canvas.h>
 #include <synfig/value.h>
+
 #include "selectionmanager.h"
 #include "uimanager.h"
 #include "value_desc.h"

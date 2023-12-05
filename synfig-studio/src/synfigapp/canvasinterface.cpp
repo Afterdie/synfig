@@ -66,6 +66,7 @@
 #include <synfig/valuenodes/valuenode_timedswap.h>
 #include <synfig/valuenodes/valuenode_twotone.h>
 #include <synfig/valuenodes/valuenode_wplist.h>
+
 #include <synfigapp/localization.h>
 
 #include "action_system.h"
@@ -78,7 +79,7 @@
 #include "actions/layerremove.h"
 #include "actions/valuedescconvert.h"
 #include "actions/valuenodeadd.h"
-#include <iostream>
+
 #endif
 
 /* === U S I N G =========================================================== */
