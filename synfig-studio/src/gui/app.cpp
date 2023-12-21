@@ -276,7 +276,7 @@ String studio::App::predefined_size              (DEFAULT_PREDEFINED_SIZE);
 String studio::App::predefined_fps               (DEFAULT_PREDEFINED_FPS);
 float  studio::App::preferred_fps                = 24.0;
 PluginManager studio::App::plugin_manager;
-std::set< String > studio::App::brushes_path;
+std::set< filesystem::Path > studio::App::brushes_path;
 String studio::App::image_editor_path;
 
 String studio::App::sequence_separator(".");
@@ -509,8 +509,8 @@ public:
 			if(key=="brushes_path")
 			{
 				value="";
-				if(!App::brushes_path.empty())
-					value=*(App::brushes_path.begin());
+				if (!App::brushes_path.empty())
+					value = App::brushes_path.begin()->u8string();
 				return true;
 			}
 			if(key=="custom_filename_prefix")
@@ -1299,26 +1299,26 @@ App::get_default_accel_map()
 	// Add default keyboard accelerators
 	static const std::map<const char*, const char*> default_accel_map = {
 		// Toolbox
-		{"s",             "<Actions>/action_group_state_manager/state-normal"},
-		{"m",             "<Actions>/action_group_state_manager/state-smooth_move"},
-		{"l",             "<Actions>/action_group_state_manager/state-scale"},
-		{"a",             "<Actions>/action_group_state_manager/state-rotate"},
-		{"i",             "<Actions>/action_group_state_manager/state-mirror"},
-		{"e",             "<Actions>/action_group_state_manager/state-circle"},
-		{"r",             "<Actions>/action_group_state_manager/state-rectangle"},
-		{"asterisk",      "<Actions>/action_group_state_manager/state-star"},
-		{"g",             "<Actions>/action_group_state_manager/state-gradient"},
-		{"o",             "<Actions>/action_group_state_manager/state-polygon"},
-		{"b",             "<Actions>/action_group_state_manager/state-bline"},
-		{"n",             "<Actions>/action_group_state_manager/state-bone"},
-		{"t",             "<Actions>/action_group_state_manager/state-text"},
-		{"u",             "<Actions>/action_group_state_manager/state-fill"},
-		{"d",             "<Actions>/action_group_state_manager/state-eyedrop"},
-		{"c",             "<Actions>/action_group_state_manager/state-lasso"},
-		{"z",             "<Actions>/action_group_state_manager/state-zoom"},
-		{"p",             "<Actions>/action_group_state_manager/state-draw"},
-		{"k",             "<Actions>/action_group_state_manager/state-sketch"},
-		{"w",             "<Actions>/action_group_state_manager/state-width"},
+		{"s",             "<Actions>/action_group_state_manager/set-state-normal"},
+		{"m",             "<Actions>/action_group_state_manager/set-state-smooth_move"},
+		{"l",             "<Actions>/action_group_state_manager/set-state-scale"},
+		{"a",             "<Actions>/action_group_state_manager/set-state-rotate"},
+		{"i",             "<Actions>/action_group_state_manager/set-state-mirror"},
+		{"e",             "<Actions>/action_group_state_manager/set-state-circle"},
+		{"r",             "<Actions>/action_group_state_manager/set-state-rectangle"},
+		{"asterisk",      "<Actions>/action_group_state_manager/set-state-star"},
+		{"g",             "<Actions>/action_group_state_manager/set-state-gradient"},
+		{"o",             "<Actions>/action_group_state_manager/set-state-polygon"},
+		{"b",             "<Actions>/action_group_state_manager/set-state-bline"},
+		{"n",             "<Actions>/action_group_state_manager/set-state-bone"},
+		{"t",             "<Actions>/action_group_state_manager/set-state-text"},
+		{"u",             "<Actions>/action_group_state_manager/set-state-fill"},
+		{"d",             "<Actions>/action_group_state_manager/set-state-eyedrop"},
+		{"c",             "<Actions>/action_group_state_manager/set-state-lasso"},
+		{"z",             "<Actions>/action_group_state_manager/set-state-zoom"},
+		{"p",             "<Actions>/action_group_state_manager/set-state-draw"},
+		{"k",             "<Actions>/action_group_state_manager/set-state-sketch"},
+		{"w",             "<Actions>/action_group_state_manager/set-state-width"},
 
 		// Classic edit
 		{"<Primary>x",              "<Actions>/action_group_layer_action_manager/cut"},
@@ -1469,7 +1469,7 @@ void App::init(const synfig::String& rootpath)
 	}
 
 	// paths
-	String path_to_icons = ResourceHelper::get_icon_path();
+	filesystem::Path path_to_icons = ResourceHelper::get_icon_path();
 
 	String path_to_plugins = ResourceHelper::get_plugin_path();
 
@@ -1541,7 +1541,7 @@ void App::init(const synfig::String& rootpath)
 
 	// icons
 	init_icon_themes();
-	init_icons(path_to_icons + ETL_DIRECTORY_SEPARATOR);
+	init_icons(path_to_icons);
 
 	try
 	{
@@ -1995,10 +1995,8 @@ App::save_settings()
 				break;
 			}
 
-			std::list<std::string>::reverse_iterator iter;
-
-			for (const auto& recent_file : recent_files)
-				file << recent_file.u8string() << std::endl;
+			for (auto r_iter = recent_files.rbegin(); r_iter != recent_files.rend(); ++r_iter)
+				file << r_iter->u8string() << std::endl;
 		} while (false);
 		filesystem::Path filename = get_config_file("settings-1.4");
 		synfigapp::Main::settings().save_to_file(filename);
@@ -3531,7 +3529,7 @@ App::wrap_into_temporary_filesystem(
 	std::string as,
 	synfig::FileContainerZip::file_size_t truncate_storage_size )
 {
-	FileSystemTemporary::Handle temporary_file_system = new FileSystemTemporary("instance", get_temporary_directory().u8string(), canvas_file_system);
+	FileSystemTemporary::Handle temporary_file_system = new FileSystemTemporary("instance", get_temporary_directory(), canvas_file_system);
 	temporary_file_system->set_meta("filename", filename);
 	temporary_file_system->set_meta("as", as);
 	temporary_file_system->set_meta("truncate", synfig::strprintf("%lld", truncate_storage_size));
@@ -3548,7 +3546,7 @@ App::open(filesystem::Path filename, /* std::string as, */ synfig::FileContainer
 	std::vector<wchar_t> long_name;
 	long_name.resize(buf_size);
 	long_name[0] = 0;
-	if (GetLongPathNameW(filename.c_str(), long_name.data(), sizeof(long_name)) == 0)
+	if (GetLongPathNameW(filename.c_str(), long_name.data(), long_name.size()) == 0)
 		;
 	// when called from autorecover.cpp, filename doesn't exist, and so long_name is empty
 	// don't use it if that's the case
@@ -3656,7 +3654,7 @@ App::open_from_temporary_filesystem(const filesystem::Path& temporary_filename)
 
 		// try open temporary container
 		FileSystemTemporary::Handle file_system_temporary(new FileSystemTemporary(""));
-		if (!file_system_temporary->open_temporary(temporary_filename.u8string()))
+		if (!file_system_temporary->open_temporary(temporary_filename))
 			throw (String)strprintf(_("Unable to open temporary container \"%s\"\n\n"), temporary_filename.u8_str());
 
 		// get original filename
